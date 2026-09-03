@@ -18,7 +18,7 @@ app.use(async (req, res, next) => {
         console.error(`[DB Middleware Error] ${req.method} ${req.url}:`, dbErr.message);
         return res.status(500).json({
             message: 'Database connection failed',
-            error: process.env.NODE_ENV === 'development' ? dbErr.message : undefined
+            error: dbErr.message
         });
     }
 });

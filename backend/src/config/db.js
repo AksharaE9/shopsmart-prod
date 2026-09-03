@@ -2,11 +2,13 @@ const mongoose = require('mongoose');
 const dns = require('dns');
 const autoSeed = require('../utils/autoSeed');
 
-// Configure reliable DNS servers to prevent SRV lookup ECONNREFUSED issues
-try {
-    dns.setServers(['8.8.8.8', '1.1.1.1', '8.8.4.4']);
-} catch (dnsErr) {
-    // Ignore if environment overrides custom DNS settings
+// Configure DNS servers for local environment (skip on Vercel where system DNS is managed)
+if (!process.env.VERCEL) {
+    try {
+        dns.setServers(['8.8.8.8', '1.1.1.1', '8.8.4.4']);
+    } catch (dnsErr) {
+        // Ignore if environment overrides custom DNS settings
+    }
 }
 
 let cached = global.mongoose;
