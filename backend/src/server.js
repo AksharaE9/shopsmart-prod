@@ -6,9 +6,6 @@ require('dotenv').config();
 
 const app = express();
 
-// Connect to MongoDB
-connectDB().catch(err => console.error('Initial DB connection error:', err.message));
-
 // Health check (responds 200 OK immediately for probes)
 app.get('/api/health', (req, res) => {
     res.json({ status: 'OK', message: 'Retail Connect Pro API is running' });
