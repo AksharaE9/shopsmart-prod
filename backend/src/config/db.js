@@ -17,6 +17,8 @@ if (!cached) {
     cached = global.mongoose = { conn: null, promise: null };
 }
 
+const DEFAULT_MONGO_URI = 'mongodb+srv://jishnunreddy_db_user:4rj9VKCRYPLYFxiR@cluster0.uardtnp.mongodb.net/shopsmart?retryWrites=true&w=majority';
+
 const connectDB = async () => {
     // If connection exists and is connected, return it
     if (cached.conn && mongoose.connection.readyState === 1) {
@@ -30,11 +32,7 @@ const connectDB = async () => {
             maxPoolSize: 10,
         };
 
-        const mongoUri = process.env.MONGODB_URI;
-        if (!mongoUri) {
-            console.error('❌ MONGODB_URI missing in environment variables!');
-            throw new Error('MONGODB_URI environment variable is required');
-        }
+        const mongoUri = process.env.MONGODB_URI || DEFAULT_MONGO_URI;
 
         console.log('🔌 Connecting to MongoDB...');
         cached.promise = mongoose.connect(mongoUri, opts).then((m) => {
