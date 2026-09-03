@@ -5,7 +5,7 @@
   "main": "src/server.js",
   "type": "commonjs",
   "scripts": {
-    "build": "node -e \"const fs=require('fs'); if(!fs.existsSync('dist')) fs.mkdirSync('dist');\" && echo 'Backend ready for Vercel'",
+    "build": "node -e \"const fs=require('fs'); if(!fs.existsSync('dist')) fs.mkdirSync('dist'); fs.writeFileSync('dist/index.html', 'Backend API Running');\" && echo 'Backend ready for Vercel'",
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
     "lint": "eslint src/"
