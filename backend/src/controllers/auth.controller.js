@@ -42,11 +42,16 @@ const register = async (req, res) => {
             const city = parts[0] || rawCityState || 'Bangalore';
             const state = parts[1] || 'Karnataka';
 
+            const gstRegex = /^\d{2}[A-Z]{5}\d{4}[A-Z]{1}[A-Z\d]{1}[Z]{1}[A-Z\d]{1}$/i;
+            const validGstNumber = (gstNumber && typeof gstNumber === 'string' && gstRegex.test(gstNumber.trim()))
+                ? gstNumber.trim().toUpperCase()
+                : undefined;
+
             const outletData = {
                 name: shopName,
                 ownerUserId: user._id,
                 phone: phone || '9999999999',
-                gstNumber: gstNumber || undefined,
+                gstNumber: validGstNumber,
                 address: {
                     street: address.street || 'Main Street',
                     city: city,
