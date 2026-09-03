@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "functions": {
+    "src/server.js": {
+      "maxDuration": 15,
+      "memory": 1024
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "src/server.js"
+    }
+  ]
+}

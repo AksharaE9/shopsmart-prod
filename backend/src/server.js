@@ -7,7 +7,22 @@ require('dotenv').config();
 const app = express();
 
 // Connect to MongoDB
-connectDB();
+connectDB().catch(err => console.error('Initial DB connection error:', err.message));
+
+// Middleware to ensure DB connection is ready before handling API request
+app.use(async (req, res, next) => {
+    try {
+        await connectDB();
+        next();
+    } catch (dbErr) {
+        console.error(`[DB Middleware Error] ${req.method} ${req.url}:`, dbErr.message);
+        return res.status(500).json({
+            message: 'Database connection failed',
+            error: process.env.NODE_ENV === 'development' ? dbErr.message : undefined
+        });
+    }
+});
+
 
 // Middleware
 const allowedOrigins = [
