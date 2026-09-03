@@ -64,18 +64,28 @@ const path = require('path');
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Routes
-app.use('/api/auth', require('./routes/auth.routes'));
-app.use('/api/products', require('./routes/product.routes'));
-app.use('/api/orders', require('./routes/order.routes'));
-app.use('/api/users', require('./routes/user.routes'));
-app.use('/api/outlets', require('./routes/outlet.routes'));
-app.use('/api/admin/analytics', require('./routes/analytics.routes'));
-app.use('/api/admin', require('./routes/admin.routes'));
-app.use('/api/payments', require('./routes/payment.routes'));
-app.use('/api/bulk', require('./routes/bulk.routes'));
+const authRoutes = require('./routes/auth.routes');
+const productRoutes = require('./routes/product.routes');
+const orderRoutes = require('./routes/order.routes');
+const userRoutes = require('./routes/user.routes');
+const outletRoutes = require('./routes/outlet.routes');
+const analyticsRoutes = require('./routes/analytics.routes');
+const adminRoutes = require('./routes/admin.routes');
+const paymentRoutes = require('./routes/payment.routes');
+const bulkRoutes = require('./routes/bulk.routes');
 
-// Health check
-app.get('/api/health', (req, res) => {
+['/api/auth', '/auth'].forEach(path => app.use(path, authRoutes));
+['/api/products', '/products'].forEach(path => app.use(path, productRoutes));
+['/api/orders', '/orders'].forEach(path => app.use(path, orderRoutes));
+['/api/users', '/users'].forEach(path => app.use(path, userRoutes));
+['/api/outlets', '/outlets'].forEach(path => app.use(path, outletRoutes));
+['/api/admin/analytics', '/admin/analytics'].forEach(path => app.use(path, analyticsRoutes));
+['/api/admin', '/admin'].forEach(path => app.use(path, adminRoutes));
+['/api/payments', '/payments'].forEach(path => app.use(path, paymentRoutes));
+['/api/bulk', '/bulk'].forEach(path => app.use(path, bulkRoutes));
+
+// Health check (supports both /api/health and /health)
+app.get(['/api/health', '/health'], (req, res) => {
     res.json({ status: 'OK', message: 'Retail Connect Pro API is running' });
 });
 
