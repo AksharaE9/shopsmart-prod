@@ -19,6 +19,13 @@ const register = async (req, res) => {
             }
         }
 
+        if (phone) {
+            const existingPhone = await User.findOne({ phone });
+            if (existingPhone) {
+                return res.status(400).json({ message: 'User already exists with this phone number' });
+            }
+        }
+
         // Create the user account
         const user = await User.create({
             name,
@@ -30,15 +37,18 @@ const register = async (req, res) => {
 
         // If shop details were provided, create the Outlet record too
         if (shopName && address) {
-            const [city = '', state = ''] = (address.cityState || '').split(',').map((s) => s.trim());
+            const rawCityState = (address.cityState || '').trim();
+            const parts = rawCityState.split(',').map((s) => s.trim()).filter(Boolean);
+            const city = parts[0] || rawCityState || 'Bangalore';
+            const state = parts[1] || 'Karnataka';
 
             const outletData = {
                 name: shopName,
                 ownerUserId: user._id,
-                phone: phone || '0000000000',
+                phone: phone || '9999999999',
                 gstNumber: gstNumber || undefined,
                 address: {
-                    street: address.street || '',
+                    street: address.street || 'Main Street',
                     city: city,
                     state: state,
                     zipCode: (address.zipCode || '').replace(/\D/g, '').padStart(6, '0').slice(0, 6),
@@ -72,6 +82,15 @@ const register = async (req, res) => {
             token: generateToken(user._id),
         });
     } catch (error) {
+        console.error('Registration error:', error);
+        if (error.code === 11000) {
+            const field = Object.keys(error.keyPattern || {})[0] || 'account';
+            return res.status(400).json({ message: `An account with this ${field} already exists.` });
+        }
+        if (error.name === 'ValidationError') {
+            const messages = Object.values(error.errors).map((e) => e.message).join(', ');
+            return res.status(400).json({ message: messages });
+        }
         res.status(500).json({ message: error.message });
     }
 };

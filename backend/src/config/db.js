@@ -16,7 +16,6 @@ const connectDB = async () => {
     if (!cached.promise) {
         const opts = {
             serverSelectionTimeoutMS: 8000,
-            bufferCommands: false,
         };
 
         const mongoUri = process.env.MONGODB_URI;
