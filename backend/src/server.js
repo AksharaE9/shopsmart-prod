@@ -22,11 +22,13 @@ app.use(cors({
         if (!origin) return callback(null, true);
         
         const normalizedOrigin = origin.replace(/\/$/, '');
-        if (allowedOrigins.includes(normalizedOrigin)) {
+        if (
+            allowedOrigins.includes(normalizedOrigin) ||
+            /\.vercel\.app$/.test(normalizedOrigin)
+        ) {
             callback(null, true);
         } else {
             console.error(`[CORS] Rejected: ${origin}. Allowed: ${allowedOrigins.join(', ')}`);
-            // In development, maybe allow it but log it? No, stay strict but informative.
             callback(new Error(`CORS blocked for origin: ${origin}`));
         }
     },
@@ -81,9 +83,11 @@ app.use((err, req, res, next) => {
     });
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
-});
+if (!process.env.VERCEL) {
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => {
+        console.log(`🚀 Server running on http://localhost:${PORT}`);
+    });
+}
 
 module.exports = app;
