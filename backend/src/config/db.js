@@ -25,7 +25,9 @@ const connectDB = async () => {
 
     if (!cached.promise) {
         const opts = {
-            serverSelectionTimeoutMS: 8000,
+            serverSelectionTimeoutMS: 5000,
+            connectTimeoutMS: 10000,
+            maxPoolSize: 10,
         };
 
         const mongoUri = process.env.MONGODB_URI;
@@ -35,13 +37,12 @@ const connectDB = async () => {
         }
 
         console.log('🔌 Connecting to MongoDB...');
-        cached.promise = mongoose.connect(mongoUri, opts).then(async (m) => {
+        cached.promise = mongoose.connect(mongoUri, opts).then((m) => {
             console.log(`✅ MongoDB Connected: ${m.connection.host}`);
-            try {
-                await autoSeed();
-            } catch (seedErr) {
+            // Trigger autoSeed asynchronously so it doesn't block serverless request execution
+            autoSeed().catch((seedErr) => {
                 console.error('Auto-seed warning:', seedErr.message);
-            }
+            });
             return m;
         }).catch((err) => {
             cached.promise = null;

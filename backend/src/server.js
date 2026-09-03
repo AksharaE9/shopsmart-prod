@@ -28,6 +28,7 @@ app.use(async (req, res, next) => {
 const allowedOrigins = [
     'http://localhost:5173',
     'http://localhost:8080',
+    'https://shopsmart-prod.vercel.app',
     'https://shopsmart-hazel.vercel.app',
     process.env.CLIENT_URL,
 ].filter(Boolean).map(o => o.replace(/\/$/, '')); // Remove trailing slashes
